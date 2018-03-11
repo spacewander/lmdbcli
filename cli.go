@@ -21,6 +21,16 @@ func formatListToStr(list []string) string {
 	return strings.Join(padded, "\n")
 }
 
+func formatMapToStr(strMap map[string]string) string {
+	formatted := make([]string, len(strMap))
+	i := 0
+	for k := range strMap {
+		formatted[i] = fmt.Sprintf(`%s) %v`, k, strMap[k])
+		i++
+	}
+	return strings.Join(formatted, "\n")
+}
+
 func formatStatToStr(stat *lmdb.Stat) string {
 	formatted := make([]string, 6)
 	formatted[0] = fmt.Sprintf(`branch pages) %v`, stat.BranchPages)
@@ -32,10 +42,22 @@ func formatStatToStr(stat *lmdb.Stat) string {
 	return strings.Join(formatted, "\n")
 }
 
+func help() string {
+	tips := make(map[string]string, len(CmdMap))
+	for name, cmd := range CmdMap {
+		tips[name] = cmd.tip
+	}
+	return formatMapToStr(tips)
+}
+
 // ExecCmdInCli executes one command and returns the string result for
 // displaying in terminal.
 func ExecCmdInCli(line string) string {
 	fields := strings.Fields(strings.TrimSpace(line))
+	if fields[0] == "help" {
+		return help()
+	}
+
 	res, err := Exec(fields[0], fields[1:]...)
 	if err != nil {
 		return err.Error()
@@ -47,6 +69,9 @@ func ExecCmdInCli(line string) string {
 
 	switch res := res.(type) {
 	case bool:
+		if fields[0] == "exists" {
+			return strconv.FormatBool(res)
+		}
 		return "OK"
 	case string:
 		return fmt.Sprintf("\"%s\"", res)
