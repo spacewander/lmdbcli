@@ -32,11 +32,17 @@ func formatStatToStr(stat *lmdb.Stat) string {
 	return strings.Join(formatted, "\n")
 }
 
-func execCmdInCli(line string) string {
+// ExecCmdInCli executes one command and returns the string result for
+// displaying in terminal.
+func ExecCmdInCli(line string) string {
 	fields := strings.Fields(strings.TrimSpace(line))
 	res, err := Exec(fields[0], fields[1:]...)
 	if err != nil {
 		return err.Error()
+	}
+
+	if res == nil {
+		return fmt.Sprintf("unknown command '%s'", fields[0])
 	}
 
 	switch res := res.(type) {
@@ -55,6 +61,7 @@ func execCmdInCli(line string) string {
 	}
 }
 
+// StartCli starts the CLI mode
 func StartCli() {
-	println(execCmdInCli("stat"))
+	println(ExecCmdInCli("stat"))
 }
