@@ -2,11 +2,16 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"math"
+	"os"
+	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 
 	"github.com/bmatsuo/lmdb-go/lmdb"
+	"github.com/chzyer/readline"
 )
 
 // Format ["o1", "o2"] to string
@@ -86,7 +91,56 @@ func ExecCmdInCli(line string) string {
 	}
 }
 
-// StartCli starts the CLI mode
+func buildCompleter() readline.AutoCompleter {
+	cmds := []readline.PrefixCompleterInterface{}
+	for k := range CmdMap {
+		cmds = append(cmds, readline.PcItem(k))
+	}
+
+	cmds = append(cmds, readline.PcItem("help"))
+	return readline.NewPrefixCompleter(cmds...)
+}
+
+func getHomeDir() string {
+	env := "HOME"
+	if runtime.GOOS == "windows" {
+		env = "USERPROFILE"
+	}
+	return os.Getenv(env)
+}
+
+// StartCli starts the cli mode
 func StartCli() {
-	println(ExecCmdInCli("stat"))
+	historyFileDir := filepath.Join(getHomeDir(), ".cache")
+	if _, err := os.Stat(historyFileDir); os.IsNotExist(err) {
+		// simply ignore error since the history feature is optional.
+		os.Mkdir(historyFileDir, 0644)
+	}
+	l, err := readline.NewEx(&readline.Config{
+		AutoComplete:    buildCompleter(),
+		Prompt:          DbName + "> ",
+		HistoryFile:     filepath.Join(historyFileDir, "lmdbclihistory"),
+		HistoryLimit:    1000,
+		InterruptPrompt: "^C",
+		EOFPrompt:       "exit",
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer l.Close()
+
+	for {
+		line, err := l.Readline()
+		if err == readline.ErrInterrupt {
+			if len(line) == 0 {
+				break
+			} else {
+				continue
+			}
+		} else if err == io.EOF {
+			break
+		}
+
+		println(ExecCmdInCli(line))
+	}
 }

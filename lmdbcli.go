@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/bmatsuo/lmdb-go/lmdb"
 )
@@ -12,6 +13,8 @@ import (
 var (
 	// Env is the global environment inited at the beginning
 	Env *lmdb.Env
+	// DbName is the basename of given database file
+	DbName string
 
 	shouldPrintVersion = flag.Bool("version", false, "Output version and exit.")
 	version            = "1.0.0"
@@ -40,6 +43,7 @@ func initDB(dbPath string) {
 		log.Fatalf("Could not open %s: %v", dbPath, err)
 	}
 	Env = env
+	DbName = filepath.Base(dbPath)
 }
 
 func printVersion() {

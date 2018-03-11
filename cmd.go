@@ -93,11 +93,12 @@ func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err err
 	}
 }
 
+// CmdMap holds commands used in all modes
 var CmdMap = map[string]command{
 	"get":  {1, get, false, "GET a value with 'get [db...] key'"},
 	"set":  {2, put, true, "SET a value with 'set [db...] key'"},
 	"put":  {2, put, true, "PUT is an alias of SET"},
-	"stat": {0, stat, false, "get mdb_stat with 'stat' or 'stat db'"},
+	"stat": {0, stat, false, "STAT get mdb_stat with 'stat' or 'stat db'"},
 	"exists": {1, exists, false,
 		"EXISTS check if a key exists with 'exists [db...] key'"},
 	"del": {1, del, true, "DEL remove a key with 'del [db...] key'"},
@@ -124,14 +125,14 @@ func Exec(cmdName string, args ...string) (res interface{}, err error) {
 
 	keyStartPos := len(args) - cmd.minArgc
 
-	var run_txn func(op lmdb.TxnOp) (err error)
+	var runTxn func(op lmdb.TxnOp) (err error)
 	if cmd.needUpdate {
-		run_txn = Env.Update
+		runTxn = Env.Update
 	} else {
-		run_txn = Env.View
+		runTxn = Env.View
 	}
 
-	err = run_txn(func(txn *lmdb.Txn) (err error) {
+	err = runTxn(func(txn *lmdb.Txn) (err error) {
 		dbi, err := txn.OpenRoot(0)
 		if err != nil {
 			return err
@@ -157,7 +158,7 @@ func Exec(cmdName string, args ...string) (res interface{}, err error) {
 	if cmdName == "del" && lmdb.IsErrno(err, lmdb.Incompatible) {
 		// Is a database? Try again with drop in other txn.
 		// The former txn may create new DBI.
-		err = run_txn(func(txn *lmdb.Txn) (err error) {
+		err = runTxn(func(txn *lmdb.Txn) (err error) {
 			dbi, err := txn.OpenRoot(0)
 			if err != nil {
 				return err
