@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  branch = "master"
+  name = "github.com/Shopify/go-lua"
+  packages = ["."]
+  revision = "1641873898887d13ad3c933310a225a629978b50"
+
+[[projects]]
   name = "github.com/bmatsuo/lmdb-go"
   packages = ["internal/lmdbarch","lmdb"]
   revision = "7b9e3bb5a8e4b9aac8972dced855c5aabad6ba2e"
@@ -40,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "256949aa3111467075dbf1dc898c47e416304e3dc3f596d2da7acf75805781a9"
+  inputs-digest = "aca566cd8f136f0a3324f530809be6c0be2ba266f8f6d297659fb515d896a750"
   solver-name = "gps-cdcl"
   solver-version = 1
