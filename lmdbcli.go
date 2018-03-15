@@ -18,6 +18,8 @@ var (
 
 	shouldPrintVersion = flag.Bool("version", false, "Output version and exit.")
 	version            = "1.0.0"
+
+	scriptPath = flag.String("e", "", "Eval the Lua script in given path")
 )
 
 func initDB(dbPath string) {
@@ -63,5 +65,14 @@ func main() {
 
 	initDB(flag.Arg(0))
 	defer Env.Close()
-	StartCli()
+
+	if *scriptPath != "" {
+		err := StartScript(*scriptPath)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+	} else {
+		StartCli()
+	}
 }
