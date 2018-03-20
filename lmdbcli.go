@@ -17,7 +17,7 @@ var (
 	DbName string
 
 	shouldPrintVersion = flag.Bool("version", false, "Output version and exit.")
-	version            = "1.0.0"
+	version            = "0.9.20.1"
 
 	scriptPath = flag.String("e", "", "Eval the Lua script in given path")
 )
