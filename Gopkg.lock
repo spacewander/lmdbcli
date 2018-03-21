@@ -8,12 +8,6 @@
   revision = "1641873898887d13ad3c933310a225a629978b50"
 
 [[projects]]
-  name = "github.com/bmatsuo/lmdb-go"
-  packages = ["internal/lmdbarch","lmdb"]
-  revision = "7b9e3bb5a8e4b9aac8972dced855c5aabad6ba2e"
-  version = "v1.8.0"
-
-[[projects]]
   name = "github.com/chzyer/readline"
   packages = ["."]
   revision = "62c6fe6193755f722b8b8788aa7357be55a50ff1"
@@ -38,6 +32,12 @@
   version = "v1.0.0"
 
 [[projects]]
+  name = "github.com/spacewander/lmdb-go"
+  packages = ["internal/lmdbarch","lmdb"]
+  revision = "489ee86d27d89f5f36fc5f581419a2898130934b"
+  version = "0.9.19"
+
+[[projects]]
   name = "github.com/stretchr/testify"
   packages = ["assert","require","suite"]
   revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
@@ -46,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "aca566cd8f136f0a3324f530809be6c0be2ba266f8f6d297659fb515d896a750"
+  inputs-digest = "ea740bf5b707c1d9861f413f89a67c53b39b58cebfe9d21b113f59cbbda87f39"
   solver-name = "gps-cdcl"
   solver-version = 1

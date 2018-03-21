@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bmatsuo/lmdb-go/lmdb"
+	"github.com/spacewander/lmdb-go/lmdb"
 	"github.com/gobwas/glob"
 )
 
