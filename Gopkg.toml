@@ -23,7 +23,8 @@
 
 [[constraint]]
   name = "github.com/spacewander/lmdb-go"
-  version = "0.9.19"
+  # version = "0.9.21"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/stretchr/testify"

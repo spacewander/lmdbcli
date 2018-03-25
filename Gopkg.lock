@@ -32,10 +32,10 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/spacewander/lmdb-go"
   packages = ["internal/lmdbarch","lmdb"]
-  revision = "489ee86d27d89f5f36fc5f581419a2898130934b"
-  version = "0.9.19"
+  revision = "c92d5394f0194281d7bf697b255cadf2c8f73eeb"
 
 [[projects]]
   name = "github.com/stretchr/testify"
@@ -46,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ea740bf5b707c1d9861f413f89a67c53b39b58cebfe9d21b113f59cbbda87f39"
+  inputs-digest = "37b3347495607bf902b2341d7ebf08ebe05e5a6d7d42dddf2874820df1802978"
   solver-name = "gps-cdcl"
   solver-version = 1
