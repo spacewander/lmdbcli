@@ -35,7 +35,7 @@
   branch = "master"
   name = "github.com/spacewander/lmdb-go"
   packages = ["internal/lmdbarch","lmdb"]
-  revision = "c92d5394f0194281d7bf697b255cadf2c8f73eeb"
+  revision = "230f22351800ac49e1262f6904801dcefa652611"
 
 [[projects]]
   name = "github.com/stretchr/testify"
