@@ -122,8 +122,17 @@ func (suite *CmdSuite) TestKeys() {
 
 	assert.Equal(suite.T(), "OK", ExecCmdInCli("set key value"))
 	assert.Equal(suite.T(), `1) "key"`, ExecCmdInCli("keys k*"))
+
 	assert.Equal(suite.T(), "OK", ExecCmdInCli("set key2 value"))
-	assert.Equal(suite.T(), `1) "key"`+"\n"+`2) "key2"`, ExecCmdInCli("keys k*"))
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set k value"))
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set y value"))
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set ky value"))
+	assert.Equal(suite.T(), `1) "key"`, ExecCmdInCli("keys key"))
+	assert.Equal(suite.T(), `1) "ky"`, ExecCmdInCli("keys k[ey]"))
+	assert.Equal(suite.T(), `1) "key"`, ExecCmdInCli("keys k?y"))
+	assert.Equal(suite.T(), `1) "key"`+"\n"+`2) "key2"`, ExecCmdInCli("keys ke*"))
+	assert.Equal(suite.T(), `1) "key"`+"\n"+`2) "ky"`+"\n"+`3) "y"`,
+		ExecCmdInCli("keys *y"))
 
 	assert.Equal(suite.T(), "OK", ExecCmdInCli("set db key value"))
 	assert.Equal(suite.T(), `1) "key"`, ExecCmdInCli("keys db k*"))

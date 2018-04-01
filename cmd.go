@@ -1,11 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"regexp"
 	"strings"
 
-	"github.com/spacewander/lmdb-go/lmdb"
 	"github.com/gobwas/glob"
+	"github.com/spacewander/lmdb-go/lmdb"
+)
+
+var (
+	globSpecialChar = regexp.MustCompile(`[*\[{}?\\]`)
 )
 
 type command struct {
@@ -65,6 +71,15 @@ func del(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err erro
 }
 
 func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err error) {
+	byteKey := []byte(args[0])
+	globIdx := globSpecialChar.FindIndex(byteKey)
+	var prefix []byte
+	if globIdx == nil {
+		prefix = byteKey
+	} else if globIdx[0] > 0 {
+		prefix = byteKey[:globIdx[0]]
+	}
+
 	pattern, err := glob.Compile(args[0])
 	if err != nil {
 		return
@@ -77,13 +92,25 @@ func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err err
 	defer cur.Close()
 
 	res = []string{}
+	rangeFound := prefix == nil
 	for {
-		k, _, err := cur.Get(nil, nil, lmdb.Next)
+		var k []byte
+		if !rangeFound {
+			k, _, err = cur.Get(prefix, nil, lmdb.SetRange)
+			rangeFound = true
+		} else {
+			k, _, err = cur.Get(nil, nil, lmdb.Next)
+		}
+
 		if lmdb.IsNotFound(err) {
 			return res, nil
 		}
 		if err != nil {
 			return nil, err
+		}
+
+		if !bytes.HasPrefix(k, prefix) {
+			return res, nil
 		}
 
 		s := string(k)
