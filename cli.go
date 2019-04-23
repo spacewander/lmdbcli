@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/spacewander/lmdb-go/lmdb"
 	"github.com/chzyer/readline"
+	"github.com/spacewander/lmdb-go/lmdb"
 )
 
 // Format ["o1", "o2"] to string
@@ -59,6 +59,10 @@ func help() string {
 // displaying in terminal.
 func ExecCmdInCli(line string) string {
 	fields := strings.Fields(strings.TrimSpace(line))
+	if len(fields) == 0 {
+		return ""
+	}
+
 	if fields[0] == "help" {
 		return help()
 	}

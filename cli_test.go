@@ -37,6 +37,8 @@ func (suite *CmdSuite) TearDownTest() {
 }
 
 func (suite *CmdSuite) TestExecCmdInCli() {
+	assert.Equal(suite.T(), "", ExecCmdInCli(""))
+
 	assert.Equal(suite.T(), "unknown command 'non-exist'", ExecCmdInCli("non-exist cmd"))
 	// Ignore the case of command name
 	assert.Equal(suite.T(), "OK", ExecCmdInCli("SET key value"))
