@@ -120,13 +120,15 @@ func execCmdInLuaScript(L *lua.State) int {
 		L.PushBoolean(res)
 	case string:
 		L.PushString(res)
+	case int:
+		L.PushNumber(float64(res))
 	case *lmdb.Stat:
 		pushStat(L, res)
 	case []string:
 		pushList(L, res)
 	default:
-		L.PushFString("The type of result returns from command '%s' with args %v is unsupported",
-			curCmd, args)
+		L.PushFString("The type of result returns from command '%s' is unsupported",
+			curCmd)
 		L.Error()
 	}
 	return 1
