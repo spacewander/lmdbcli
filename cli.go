@@ -84,6 +84,8 @@ func ExecCmdInCli(line string) string {
 		return "OK"
 	case string:
 		return fmt.Sprintf("\"%s\"", res)
+	case int:
+		return fmt.Sprintf("%d", res)
 	case []string:
 		return formatListToStr(res)
 	case *lmdb.Stat:

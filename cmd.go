@@ -70,7 +70,7 @@ func del(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err erro
 	return true, nil
 }
 
-func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err error) {
+func keysHelper(txn *lmdb.Txn, dbi *lmdb.DBI, args []string, countOnly bool) ([]string, int, error) {
 	byteKey := []byte(args[0])
 	globIdx := globSpecialChar.FindIndex(byteKey)
 	var prefix []byte
@@ -82,16 +82,22 @@ func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err err
 
 	pattern, err := glob.Compile(args[0])
 	if err != nil {
-		return
+		return nil, 0, err
 	}
 
 	cur, err := txn.OpenCursor(*dbi)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer cur.Close()
 
-	res = []string{}
+	var count int
+	var res []string
+
+	if !countOnly {
+		res = []string{}
+	}
+
 	rangeFound := prefix == nil
 	for {
 		var k []byte
@@ -103,21 +109,43 @@ func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err err
 		}
 
 		if lmdb.IsNotFound(err) {
-			return res, nil
+			return res, count, nil
 		}
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		if !bytes.HasPrefix(k, prefix) {
-			return res, nil
+			return res, count, nil
 		}
 
 		s := string(k)
 		if pattern.Match(s) {
-			res = append(res.([]string), s)
+			if countOnly {
+				count++
+			} else {
+				res = append(res, s)
+			}
 		}
 	}
+}
+
+func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err error) {
+	res, _, err = keysHelper(txn, dbi, args, false)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func count(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err error) {
+	_, res, err = keysHelper(txn, dbi, args, true)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 // CmdMap holds commands used in all modes
@@ -131,6 +159,8 @@ var CmdMap = map[string]command{
 	"del": {1, del, true, "DEL remove a key with 'del [db...] key'"},
 	"keys": {1, keys, false,
 		"KEYS lists all keys matched given glob pattern with 'keys [db...] pattern'"},
+	"count": {1, count, false,
+		"COUNT works like KEYS but only returns the number of keys"},
 }
 
 // Exec run given cmd with args

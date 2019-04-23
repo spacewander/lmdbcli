@@ -140,3 +140,23 @@ func (suite *CmdSuite) TestKeys() {
 	assert.Equal(suite.T(), `1) "key"`, ExecCmdInCli("keys db k*"))
 	assert.Equal(suite.T(), ``, ExecCmdInCli("keys db y*"))
 }
+
+func (suite *CmdSuite) TestCount() {
+	assert.Equal(suite.T(), "0", ExecCmdInCli("count key"))
+	assert.Equal(suite.T(), "wrong number of arguments for 'count' command", ExecCmdInCli("count"))
+
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set key value"))
+	assert.Equal(suite.T(), "1", ExecCmdInCli("count k*"))
+
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set key2 value"))
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set k value"))
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set y value"))
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set ky value"))
+	assert.Equal(suite.T(), "1", ExecCmdInCli("count key"))
+	assert.Equal(suite.T(), "2", ExecCmdInCli("count ke*"))
+	assert.Equal(suite.T(), "3", ExecCmdInCli("count *y"))
+
+	assert.Equal(suite.T(), "OK", ExecCmdInCli("set db key value"))
+	assert.Equal(suite.T(), "1", ExecCmdInCli("count db k*"))
+	assert.Equal(suite.T(), "0", ExecCmdInCli("count db y*"))
+}
