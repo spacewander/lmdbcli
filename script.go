@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base32"
 	"strings"
 
 	"github.com/Shopify/go-lua"
@@ -26,6 +27,11 @@ func injectAPI(L *lua.State) {
 	L.SetField(-2, "__index")
 	L.SetMetaTable(-2)
 
+	L.CreateTable(0, 1)
+	L.PushGoFunction(toHex)
+	L.SetField(-2, "to_hex")
+	L.SetField(-2, "utils")
+
 	L.Global("package")
 	L.Field(-1, "loaded")
 	L.PushValue(-3)
@@ -33,6 +39,29 @@ func injectAPI(L *lua.State) {
 	L.Pop(2)
 	L.SetGlobal("lmdb")
 }
+
+// Exported utils functions start ...
+// Once you adds a util function, please update the README to document it.
+
+func toHex(L *lua.State) int {
+	nargs := L.Top()
+	if nargs < 1 {
+		L.PushString("at least one argument expected")
+		L.Error()
+	}
+
+	var s string
+	var ok bool
+	if s, ok = lua.ToStringMeta(L, 1); !ok {
+		L.PushString("arg 1 must be a string")
+		L.Error()
+	}
+
+	L.PushString(base32.StdEncoding.EncodeToString([]byte(s)))
+	return 1
+}
+
+// Exported utils functions end
 
 func dispatchCmd(L *lua.State) int {
 	if s, ok := lua.ToStringMeta(L, 2); ok {

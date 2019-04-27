@@ -65,3 +65,12 @@ lmdb.get("key") -- return the value of `key` as a lua string
 ```
 
 See [test.lua](./test.lua) as a concrete example.
+
+### Lua utility functions
+
+To avoid writing/copying common Lua snippets, we provide some builtin utils function
+exported via `lmdb.utils` table.
+
+#### local str = tohex(str)
+
+Encode input string via base32. It could be used to format MD5 binary value.

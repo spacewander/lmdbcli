@@ -1,4 +1,5 @@
 -- luacheck: globals lmdb
+local utils = lmdb.utils
 local keys = lmdb.keys("*")
 assert(next(keys) == nil)
 
@@ -60,3 +61,26 @@ for _, k in ipairs(keys) do
     lmdb.del(k)
 end
 assert(next(lmdb.keys('*')) == nil)
+
+
+local function test_utils_to_hex()
+    local ok, err = pcall(utils.to_hex)
+    assert(not ok and err == "at least one argument expected")
+
+    local data = {
+        {"f", "MY======"},
+        {"fo", "MZXQ===="},
+        {"foo", "MZXW6==="},
+        {"Twas brillig, and the slithy toves",
+            "KR3WC4ZAMJZGS3DMNFTSYIDBNZSCA5DIMUQHG3DJORUHSIDUN53GK4Y="},
+    }
+    for _, t in ipairs(data) do
+        local input = t[1]
+        local exp = t[2]
+        local act = utils.to_hex(input)
+        assert(exp == act,
+               "input " .. input .. " expected " .. exp .. " got " .. act)
+    end
+end
+
+test_utils_to_hex()
