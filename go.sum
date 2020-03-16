@@ -1,0 +1,14 @@
+github.com/Shopify/go-lua v0.0.0-20171204204706-164187389888 h1:o6kjtyxfbCWM7bujkgpJ/lqlBoN6x1akZuQXQcUo1SQ=
+github.com/Shopify/go-lua v0.0.0-20171204204706-164187389888/go.mod h1:lvS2IGWEGk+KQkRrCXuWlcsHO5BitT0HyhnP51rh3gA=
+github.com/chzyer/readline v0.0.0-20160726135117-62c6fe619375 h1:JVe1zduaiPlSLOuQcU/MqRJkBbWRPsjdW48+20AtJXM=
+github.com/chzyer/readline v0.0.0-20160726135117-62c6fe619375/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
+github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
+github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/gobwas/glob v0.2.3 h1:A4xDbljILXROh+kObIiy5kIaPYD8e96x1tgBhUI5J+Y=
+github.com/gobwas/glob v0.2.3/go.mod h1:d3Ez4x06l9bZtSvzIay5+Yzi0fmZzPgnTbPcKjJAkT8=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/spacewander/lmdb-go v0.9.24 h1:WFzGlXPsuf9YeBSTLanZKCSjjDbdQzODvl0YISeSLrY=
+github.com/spacewander/lmdb-go v0.9.24/go.mod h1:WMkMFX9seC9PrdjgchY187jNXVcwnzxFd6o9fCnd8js=
+github.com/stretchr/testify v1.2.1 h1:52QO5WkIUcHGIR7EnGagH88x1bUzqGXTC5/1bDTUQ7U=
+github.com/stretchr/testify v1.2.1/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
