@@ -70,7 +70,12 @@ func del(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err erro
 	return true, nil
 }
 
-func keysHelper(txn *lmdb.Txn, dbi *lmdb.DBI, args []string, countOnly bool) ([]string, int, error) {
+type kvPair struct {
+	key string
+	val string
+}
+
+func keysHelper(txn *lmdb.Txn, dbi *lmdb.DBI, args []string, countOnly bool) ([]*kvPair, int, error) {
 	byteKey := []byte(args[0])
 	globIdx := globSpecialChar.FindIndex(byteKey)
 	var prefix []byte
@@ -92,20 +97,20 @@ func keysHelper(txn *lmdb.Txn, dbi *lmdb.DBI, args []string, countOnly bool) ([]
 	defer cur.Close()
 
 	var count int
-	var res []string
+	var res []*kvPair
 
 	if !countOnly {
-		res = []string{}
+		res = []*kvPair{}
 	}
 
 	rangeFound := prefix == nil
 	for {
-		var k []byte
+		var k, v []byte
 		if !rangeFound {
-			k, _, err = cur.Get(prefix, nil, lmdb.SetRange)
+			k, v, err = cur.Get(prefix, nil, lmdb.SetRange)
 			rangeFound = true
 		} else {
-			k, _, err = cur.Get(nil, nil, lmdb.Next)
+			k, v, err = cur.Get(nil, nil, lmdb.Next)
 		}
 
 		if lmdb.IsNotFound(err) {
@@ -124,14 +129,30 @@ func keysHelper(txn *lmdb.Txn, dbi *lmdb.DBI, args []string, countOnly bool) ([]
 			if countOnly {
 				count++
 			} else {
-				res = append(res, s)
+				res = append(res, &kvPair{
+					key: s,
+					val: string(v),
+				})
 			}
 		}
 	}
 }
 
-func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err error) {
-	res, _, err = keysHelper(txn, dbi, args, false)
+func keys(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (interface{}, error) {
+	kvs, _, err := keysHelper(txn, dbi, args, false)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]string, len(kvs))
+	for i, pair := range kvs {
+		res[i] = pair.key
+	}
+	return res, nil
+}
+
+func values(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (interface{}, error) {
+	res, _, err := keysHelper(txn, dbi, args, false)
 	if err != nil {
 		return nil, err
 	}
@@ -159,6 +180,8 @@ var CmdMap = map[string]command{
 	"del": {1, del, true, "DEL remove a key with 'del [db...] key'"},
 	"keys": {1, keys, false,
 		"KEYS lists all keys matched given glob pattern with 'keys [db...] pattern'"},
+	"values": {1, values, false,
+		"VALUES lists all keys and their values matched given glob pattern with 'values [db...] pattern'"},
 	"count": {1, count, false,
 		"COUNT works like KEYS but only returns the number of keys"},
 }

@@ -43,6 +43,7 @@ $ ./lmdbcli /tmp/node
 node> help
 stat) STAT get mdb_stat with 'stat' or 'stat db'
 exists) EXISTS check if a key exists with 'exists [db...] key'
+values) VALUES lists all keys and their values matched given glob pattern with 'values [db...] pattern'
 del) DEL remove a key with 'del [db...] key'
 keys) KEYS lists all keys matched given glob pattern with 'keys [db...] pattern'
 get) GET a value with 'get [db...] key'

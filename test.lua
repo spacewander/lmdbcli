@@ -17,6 +17,7 @@ assert(err == "not found", err)
 
 assert(lmdb.set("key", 1))
 assert(lmdb.exists("key"))
+-- The result of 'get' is always a string
 assert(lmdb.get("key") == "1")
 assert(lmdb.put("empty", ""))
 assert(lmdb.get("empty") == "")
@@ -29,6 +30,13 @@ assert(count == 1)
 local keys = lmdb.keys("*")
 assert(#keys == 1)
 assert(keys[1] == "key")
+
+local values = lmdb.values("*")
+assert(#values == 1)
+local v = values[1]
+assert(v.key == "key")
+-- The result of 'values' is always a string
+assert(v.val == "1")
 
 assert(1, lmdb.del("key"))
 assert(not lmdb.exists("key"))

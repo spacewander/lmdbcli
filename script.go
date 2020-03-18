@@ -85,6 +85,22 @@ func pushList(L *lua.State, res []string) {
 	}
 }
 
+func pushPairs(L *lua.State, res []*kvPair) {
+	L.CreateTable(len(res), 0)
+	for i, pair := range res {
+		L.CreateTable(0, 2)
+
+		L.PushString("key")
+		L.PushString(pair.key)
+		L.RawSet(-3)
+		L.PushString("val")
+		L.PushString(pair.val)
+		L.RawSet(-3)
+
+		L.RawSetInt(-2, i+1)
+	}
+}
+
 func pushStat(L *lua.State, stat *lmdb.Stat) {
 	L.CreateTable(0, 6)
 	L.PushString("branch_pages")
@@ -155,6 +171,8 @@ func execCmdInLuaScript(L *lua.State) int {
 		pushStat(L, res)
 	case []string:
 		pushList(L, res)
+	case []*kvPair:
+		pushPairs(L, res)
 	default:
 		L.PushFString("The type of result returns from command '%s' is unsupported",
 			curCmd)

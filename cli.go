@@ -26,6 +26,19 @@ func formatListToStr(list []string) string {
 	return strings.Join(padded, "\n")
 }
 
+// Format [{key: "k", val: "v"}, {key: "k2", val: "v2"}] to string
+// 1) "k" "v"\n
+// 2) "k2" "v2"
+func formatPairsToStr(list []*kvPair) string {
+	paddingNum := strconv.Itoa(int(math.Log10(float64(len(list)))) + 1)
+	padded := make([]string, len(list))
+	for i, data := range list {
+		padded[i] = fmt.Sprintf("%"+paddingNum+`d) "%s" "%s"`, i+1,
+			data.key, data.val)
+	}
+	return strings.Join(padded, "\n")
+}
+
 func formatMapToStr(strMap map[string]string) string {
 	formatted := make([]string, len(strMap))
 	i := 0
@@ -88,6 +101,8 @@ func ExecCmdInCli(line string) string {
 		return fmt.Sprintf("%d", res)
 	case []string:
 		return formatListToStr(res)
+	case []*kvPair:
+		return formatPairsToStr(res)
 	case *lmdb.Stat:
 		return formatStatToStr(res)
 	default:
