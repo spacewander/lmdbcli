@@ -48,7 +48,8 @@ keys) KEYS lists all keys matched given glob pattern with 'keys [db...] pattern'
 get) GET a value with 'get [db...] key'
 set) SET a value with 'set [db...] key'
 put) PUT is an alias of SET
-node>
+node> ? # type '?' works the same as 'help'
+...
 ```
 
 ## Lua support

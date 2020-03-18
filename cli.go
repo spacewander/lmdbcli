@@ -63,7 +63,7 @@ func ExecCmdInCli(line string) string {
 		return ""
 	}
 
-	if fields[0] == "help" {
+	if fields[0] == "help" || fields[0] == "?" {
 		return help()
 	}
 
