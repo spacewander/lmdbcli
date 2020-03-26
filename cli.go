@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"io"
 	"math"
@@ -9,10 +10,41 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/chzyer/readline"
 	"github.com/spacewander/lmdb-go/lmdb"
 )
+
+var (
+	hexEncoded = false
+)
+
+func toggleHex() (string, error) {
+	if !hexEncoded {
+		hexEncoded = true
+		return "hex encode mode turn on", nil
+	}
+	hexEncoded = false
+	return "hex encode mode turn off", nil
+}
+
+func mayHex(in string) string {
+	if !hexEncoded {
+		return fmt.Sprintf("\"%s\"", in)
+	}
+
+	needHexEncoded := false
+	for _, ch := range in {
+		if ch > unicode.MaxASCII || !unicode.IsPrint(ch) {
+			needHexEncoded = true
+		}
+	}
+	if needHexEncoded {
+		return fmt.Sprintf("[%s]", hex.EncodeToString([]byte(in)))
+	}
+	return fmt.Sprintf("\"%s\"", in)
+}
 
 // Format ["o1", "o2"] to string
 // 1) "o1"\n
@@ -21,7 +53,7 @@ func formatListToStr(list []string) string {
 	paddingNum := strconv.Itoa(int(math.Log10(float64(len(list)))) + 1)
 	padded := make([]string, len(list))
 	for i, data := range list {
-		padded[i] = fmt.Sprintf("%"+paddingNum+`d) "%s"`, i+1, data)
+		padded[i] = fmt.Sprintf("%"+paddingNum+`d) %s`, i+1, mayHex(data))
 	}
 	return strings.Join(padded, "\n")
 }
@@ -33,8 +65,8 @@ func formatPairsToStr(list []*kvPair) string {
 	paddingNum := strconv.Itoa(int(math.Log10(float64(len(list)))) + 1)
 	padded := make([]string, len(list))
 	for i, data := range list {
-		padded[i] = fmt.Sprintf("%"+paddingNum+`d) "%s" "%s"`, i+1,
-			data.key, data.val)
+		padded[i] = fmt.Sprintf("%"+paddingNum+`d) %s %s`, i+1,
+			mayHex(data.key), mayHex(data.val))
 	}
 	return strings.Join(padded, "\n")
 }
@@ -96,7 +128,7 @@ func ExecCmdInCli(line string) string {
 		}
 		return "OK"
 	case string:
-		return fmt.Sprintf("\"%s\"", res)
+		return mayHex(res)
 	case int:
 		return fmt.Sprintf("%d", res)
 	case []string:

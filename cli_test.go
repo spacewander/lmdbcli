@@ -183,3 +183,13 @@ func (suite *CmdSuite) TestValues() {
 	assert.Equal(suite.T(), `1) "key" "value"`, ExecCmdInCli("values db k*"))
 	assert.Equal(suite.T(), ``, ExecCmdInCli("values db y*"))
 }
+
+func (suite *CmdSuite) TestMayHex() {
+	a := suite.Assert()
+	toggleHex()
+	a.Equal(`""`, mayHex(""))
+	a.Equal(`"ab ce"`, mayHex("ab ce"))
+	a.Equal(`[61620a6365]`, mayHex("ab\nce"))
+	a.Equal(`[e6b58be8af95]`, mayHex("测试"))
+	toggleHex()
+}

@@ -169,6 +169,10 @@ func count(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err er
 	return res, nil
 }
 
+func hexEncode(txn *lmdb.Txn, dbi *lmdb.DBI, args []string) (res interface{}, err error) {
+	return toggleHex()
+}
+
 // CmdMap holds commands used in all modes
 var CmdMap = map[string]command{
 	"get":  {1, get, false, "GET a value with 'get [db...] key'"},
@@ -184,6 +188,8 @@ var CmdMap = map[string]command{
 		"VALUES lists all keys and their values matched given glob pattern with 'values [db...] pattern'"},
 	"count": {1, count, false,
 		"COUNT works like KEYS but only returns the number of keys"},
+	"hex_encode": {0, hexEncode, false,
+		"hex_encode toggles the hex encode mode. When the mode is on, if the output string contains non-ascii or non-printable characters, the string will be hex encoded and surrounded with []."},
 }
 
 // Exec run given cmd with args

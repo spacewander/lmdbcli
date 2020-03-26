@@ -26,6 +26,7 @@ Currently supported version (tested):
 * 0.9.24
 * 0.9.21
 
+Other versions of lmdb may be supported but I haven't tested.
 Please run `go test ./...` to confirm if the lmdbcli works with your lmdb version.
 
 Note that the lmdb binding is writtern via `cgo`.
@@ -44,6 +45,7 @@ node> help
 stat) STAT get mdb_stat with 'stat' or 'stat db'
 exists) EXISTS check if a key exists with 'exists [db...] key'
 values) VALUES lists all keys and their values matched given glob pattern with 'values [db...] pattern'
+hex_encode) hex_encode toggles the hex encode mode. When the mode is on, if the output string contains non-ascii or non-printable characters, the string will be hex encoded and surrounded with [].
 del) DEL remove a key with 'del [db...] key'
 keys) KEYS lists all keys matched given glob pattern with 'keys [db...] pattern'
 get) GET a value with 'get [db...] key'
